@@ -29,7 +29,7 @@ Staging tables are used to load data from Amazon S3 buckets into Redshift. They 
 
 This table holds data from the JSON logs of user activity on the Sparkify app.
 
-The table has the distkey set to the `artist` column - this is to allow later joining of both the staging_events and staging_songs tables on the `artist`/`artist_name` columns to create the songplays table - having both of these columns distributed together in the database will improve the efficiency of the join.
+The table has the distkey set to the `artist` column - this is to allow later joining of both the staging_events and staging_songs tables on the `artist`/`artist_name` and `song`/`title` columns to create the songplays table - having both of these columns distributed together in the database will improve the efficiency of the join.
 
 #### staging_songs
 

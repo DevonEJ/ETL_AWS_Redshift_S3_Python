@@ -1,6 +1,6 @@
 import configparser
 import psycopg2
-from sql_queries import create_table_queries, drop_table_queries
+from sql_queries import create_table_queries, drop_table_queries, alter_table_queries
 
 
 def drop_tables(cur, conn):
@@ -27,6 +27,18 @@ def create_tables(cur, conn):
     for query in create_table_queries:
         cur.execute(query)
         conn.commit()
+        
+def alter_tables(cur, conn):
+    """
+    Iterates over a list of SQL queries for altering tables, executing these using the database
+    cursor and connection objects passed in.
+    
+    cur -- Database cursor object
+    conn -- Database connection object
+    """
+    for query in alter_table_queries:
+        cur.execute(query)
+        conn.commit()
 
 
 def main():
@@ -46,6 +58,7 @@ def main():
 
     drop_tables(cur, conn)
     create_tables(cur, conn)
+    alter_tables(cur, conn)
 
     conn.close()
 

@@ -59,10 +59,10 @@ DISTKEY(artist_name)
 songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplays (
 songplay_id INT IDENTITY(0,1),
 start_time VARCHAR,
-user_id INT REFERENCES users(user_id),
+user_id INT,
 level VARCHAR,
-song_id VARCHAR REFERENCES songs(song_id),
-artist_id VARCHAR REFERENCES artists(artist_id),
+song_id VARCHAR,
+artist_id VARCHAR,
 session_id INT,
 location VARCHAR,
 user_agent VARCHAR
@@ -84,7 +84,7 @@ DISTKEY(gender)
 song_table_create = ("""CREATE TABLE IF NOT EXISTS songs (
 song_id VARCHAR PRIMARY KEY,
 title VARCHAR,
-artist_id VARCHAR REFERENCES artists(artist_id),
+artist_id VARCHAR,
 year INT,
 duration DECIMAL
 )
@@ -103,7 +103,7 @@ DISTKEY(location)
 """)
 
 time_table_create = ("""CREATE TABLE IF NOT EXISTS time (
-start_time VARCHAR,
+start_time VARCHAR PRIMARY KEY,
 hour INT,
 day INT,
 week INT,
@@ -113,6 +113,17 @@ weekday INT
 )
 DISTKEY(year)
 """)
+
+# ALTER TABLES
+
+songplay_alter_table_1 = """ALTER TABLE songplays ADD CONSTRAINT FK_1 FOREIGN KEY (user_id) REFERENCES users(user_id)"""
+
+songplay_alter_table_2 = """ALTER TABLE songplays ADD CONSTRAINT FK_2 FOREIGN KEY (song_id) REFERENCES songs(song_id)"""
+
+songplay_alter_table_3 = """ALTER TABLE songplays ADD CONSTRAINT FK_3 FOREIGN KEY (artist_id) REFERENCES artists(artist_id)"""
+
+alter_songs_table = """ALTER TABLE songs ADD CONSTRAINT FK_1 FOREIGN KEY (artist_id) REFERENCES artists(artist_id)"""
+
 
 # STAGING TABLES
 
@@ -139,6 +150,7 @@ e.userId, e.level, s.song_id, s.artist_id, e.location, e.userAgent
 FROM staging_events as e
 INNER JOIN staging_songs as s
 ON e.artist = s.artist_name
+AND e.song = s.title
 WHERE e.page = 'NextSong'
 """
 
@@ -189,6 +201,7 @@ FROM staging_events
 # QUERY LISTS
 
 create_table_queries = [staging_events_table_create, staging_songs_table_create, user_table_create, artist_table_create, time_table_create, song_table_create, songplay_table_create]
+alter_table_queries = [songplay_alter_table_1, songplay_alter_table_2, songplay_alter_table_3, alter_songs_table]
 drop_table_queries = [staging_events_table_drop, staging_songs_table_drop, songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
 copy_table_queries = [staging_events_copy, staging_songs_copy]
 insert_table_queries = [songplay_table_insert, artist_table_insert, user_table_insert, song_table_insert, time_table_insert]
